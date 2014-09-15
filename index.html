@@ -19,25 +19,42 @@
 </head>
 <body>
 <script src="pouchdb-3.0.5.min.js"></script>
+<script src="jquery-2.1.1.min.js"></script>
 <script> 
 var db = new PouchDB('cozy');
 
-var sync = PouchDB.sync('mydb', '/db/cozy', {live: true})
-  .on('change', function (info) {
-    console.log(info);
-    // handle change
-  }).on('complete', function (info) {
-    // handle complete
-  }).on('uptodate', function (info) {
+PouchDB.replicate('http://localhost:19104/db/cozy', 'cozy')
+  .on('complete', function (info) {
     db.allDocs({include_docs: true}, function(err, response) { 
-      alert(response.total_rows);
-    });
-  }).on('error', function (err) {
-    // handle error
+      console.log(response);
+      var sync = PouchDB.sync('mydb', 'http://' + window.location.host + '/db/cozy', {live: true})
+          .on('change', function (info) {
+            console.log("change occured:");
+            console.log(info);
+            // handle change
+          }).on('complete', function (info) {
+            console.log("complete !");
+            console.log(info);
+            // handle complete
+          }).on('uptodate', function (info) {
+            console.log("uptodate !");
+            db.query('event/all', function(err, results) {
+              $("#events").html(null);
+              for(result in results.rows) {
+                  event = results.rows[result]
+                  $("#events").append('<p>' + event.value.start + '</p>');
+              }
+            });
+          }).on('error', function (err) {
+            console.log("error...");
+            console.log(err);
+          });
+        });
   });
   
 </script>
 Hello!
+<p id="events"></p>
 </p>
 </body>
 </html>
