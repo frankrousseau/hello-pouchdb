@@ -1,0 +1,43 @@
+<html>
+<head>
+    <style type="text/css" media="screen">
+      @font-face { 
+        font-family: mavenpro; 
+        src: url(assets/maven-pro-light-200.otf); 
+      }
+
+      @font-face { 
+        font-family: signika; 
+        src: url(signika-light.ttf); 
+      } 
+
+      body { 
+        font-family: mavenpro; 
+        padding: 20px; 
+      } 
+    </style>
+</head>
+<body>
+<script src="pouchdb-3.0.5.min.js"></script>
+<script> 
+var db = new PouchDB('cozy');
+
+var sync = PouchDB.sync('mydb', '/db/cozy', {live: true})
+  .on('change', function (info) {
+    console.log(info);
+    // handle change
+  }).on('complete', function (info) {
+    // handle complete
+  }).on('uptodate', function (info) {
+    db.allDocs({include_docs: true}, function(err, response) { 
+      alert(response.total_rows);
+    });
+  }).on('error', function (err) {
+    // handle error
+  });
+  
+</script>
+Hello!
+</p>
+</body>
+</html>
