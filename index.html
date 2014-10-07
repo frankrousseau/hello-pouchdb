@@ -23,7 +23,7 @@
 <script> 
 var db = new PouchDB('cozy');
 
-PouchDB.replicate('http://localhost:19104/db/cozy', 'cozy')
+PouchDB.replicate('http://' + window.location.host + 'db/cozy', 'cozy')
   .on('complete', function (info) {
     db.allDocs({include_docs: true}, function(err, response) { 
       console.log(response);
